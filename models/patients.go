@@ -21,13 +21,13 @@ type CreatePatientCMD struct {
 }
 
 type PatientGateway interface {
-	CreatePatient(p *Patient) (*Patient, error)
+	CreatePatient(p *CreatePatientCMD) (*Patient, error)
 	GetPatients() []*Patient
 	GetPatientByID(id int64) (*Patient, error)
 }
 
 type PatientStorage interface {
-	Save(p *Patient) (*Patient, error)
+	Save(p *CreatePatientCMD) (*Patient, error)
 	Get() []*Patient
 	GetByID(id int64) (*Patient, error)
 }

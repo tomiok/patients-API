@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/tomiok/patients-API/db"
+	"github.com/tomiok/patients-API/storage"
 	"log"
 	"os"
 
@@ -12,7 +12,7 @@ const defaultPort = "8080"
 
 func main() {
 	log.Println("stating API server")
-	conn := db.ConnectToDB()
+	conn := storage.ConnectToDB()
 	defer conn.Close()
 	port := os.Getenv("PORT")
 
