@@ -1,6 +1,9 @@
 package api
 
+import "github.com/tomiok/patients-API/models"
+
 type Services struct {
+	models.PatientGateway
 }
 
 func Start(port string) {

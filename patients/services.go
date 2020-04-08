@@ -7,18 +7,6 @@ import (
 	"time"
 )
 
-/**
-CreatePatient(p *CreatePatientCMD) (*Patient, error)
-GetPatients() []*Patient
-GetPatientByID(id int64) (*Patient, error)
-
-    first_name text NOT NULL,
-    last_name text NOT NULL,
-    address text NOT NULL,
-    phone text NOT NULL,
-    email text NOT NULL,
-*/
-
 type PatientService struct {
 	db *sql.DB
 }
@@ -27,12 +15,12 @@ func (s *PatientService) CreatePatient(p *models.CreatePatientCMD) (*models.Pati
 	res, err := s.db.Exec("insert into patient (first_name, last_name, address, phone, email) values (?,?,?,?,?)",
 		p.FirstName, p.LastName, p.Address, p.Phone, p.Email)
 
-	id, err := res.LastInsertId()
-
 	if err != nil {
 		log.Println("cannot save the patient")
 		return nil, err
 	}
+
+	id, err := res.LastInsertId()
 
 	return &models.Patient{
 		ID:        id,
@@ -56,7 +44,8 @@ func (s *PatientService) GetPatients() []*models.Patient {
 	var patients []*models.Patient
 	for rows.Next() {
 		var patient models.Patient
-		err := rows.Scan(&patient.ID, &patient.FirstName)
+		err := rows.Scan(&patient.ID, &patient.FirstName, &patient.LastName, &patient.Address, &patient.Phone,
+			&patient.Email, &patient.CreatedAt)
 		if err != nil {
 			log.Println("cannot read current row")
 			return nil
@@ -65,4 +54,18 @@ func (s *PatientService) GetPatients() []*models.Patient {
 	}
 
 	return patients
+}
+
+func (s *PatientService) GetPatientByID(id int64) (*models.Patient, error) {
+	var patient models.Patient
+	err := s.db.QueryRow(`select id, first_name, last_name, address, phone, email, created_at from patient
+		where id = ?`, id).Scan(&patient.ID, &patient.FirstName, &patient.LastName, &patient.Address, &patient.Phone,
+		&patient.Email, &patient.CreatedAt)
+
+	if err != nil {
+		log.Printf("cannot fetch patient")
+		return nil, err
+	}
+
+	return &patient, nil
 }
