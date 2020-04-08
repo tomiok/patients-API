@@ -25,9 +25,3 @@ type PatientGateway interface {
 	GetPatients() []*Patient
 	GetPatientByID(id int64) (*Patient, error)
 }
-
-type PatientStorage interface {
-	Save(p *CreatePatientCMD) (*Patient, error)
-	Get() []*Patient
-	GetByID(id int64) (*Patient, error)
-}
