@@ -4,19 +4,23 @@ import (
 	"encoding/json"
 	"github.com/go-chi/chi"
 	"github.com/tomiok/patients-API/models"
+	"log"
 	"net/http"
 	"strconv"
 )
 
 func (s *Services) getPatientsHandler(w http.ResponseWriter, r *http.Request) {
-	patients := s.GetPatients()
+	patients := s.gtw.GetPatients()
+	if patients == nil || len(patients) == 0 {
+		patients = []*models.Patient{}
+	}
 	Success(&patients, http.StatusOK).Send(w)
 }
 
 func (s *Services) getPatientsByIDHandler(w http.ResponseWriter, r *http.Request) {
 	patientID := chi.URLParam(r, "patientID")
 	id, _ := strconv.ParseInt(patientID, 10, 64)
-	patient, err := s.GetPatientByID(id)
+	patient, err := s.gtw.GetPatientByID(id)
 
 	if err != nil {
 		ErrBadRequest.Send(w)
@@ -37,13 +41,13 @@ func (s *Services) createPatientsHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	patient, err := s.CreatePatient(&cmd)
+	patient, err := s.gtw.CreatePatient(&cmd)
 
 	if err != nil {
 		ErrBadRequest.Send(w)
 		return
 	}
 
+	log.Println(patient)
 	Success(&patient, http.StatusOK).Send(w)
-
 }

@@ -11,12 +11,17 @@ type PatientService struct {
 	db *sql.DB
 }
 
+func NewPatientGateway(db *sql.DB) models.PatientGateway {
+	return &PatientService{db: db}
+}
+
 func (s *PatientService) CreatePatient(p *models.CreatePatientCMD) (*models.Patient, error) {
+	log.Println("creating a new patient")
 	res, err := s.db.Exec("insert into patient (first_name, last_name, address, phone, email) values (?,?,?,?,?)",
 		p.FirstName, p.LastName, p.Address, p.Phone, p.Email)
 
 	if err != nil {
-		log.Println("cannot save the patient")
+		log.Printf("cannot save the patient, %s", err.Error())
 		return nil, err
 	}
 

@@ -1,8 +1,9 @@
-version: "3"
+version: "3.3"
 services:
   db:
     image: "postgres:10.5"
-    restart: "unless-stopped"
+    restart:
+      unless-stopped
     ports:
       - "5432:5432"
     volumes:
@@ -12,18 +13,25 @@ services:
       POSTGRES_PASSWORD: "postgres"
       POSTGRES_DB: "project"
     networks: # Networks to join
-      - backend
+      - local
+    tty:
+      true
   app:
     depends_on:
       - db
     build:
-      context: . # Use an image built from the specified dockerfile in the current directory.
+      context: .
       dockerfile: Dockerfile
     ports:
       - "8080:8080" # Forward the exposed port 8080 on the container to port 8080 on the host machine
-    restart: "unless-stopped"
+    restart:
+      unless-stopped
+    links:
+      - "db"
     networks: # Networks to join
-      - backend
+      - local
+    tty:
+      true
 networks:
-  backend:
+  local:
     driver: bridge

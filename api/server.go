@@ -28,7 +28,7 @@ func newServer(listening string, mux *chi.Mux) *server {
 
 // Start runs ListenAndServe on the http.Server with graceful shutdown
 func (srv *server) Start() {
-	log.Println("starting server...")
+	log.Println("starting API server")
 
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
