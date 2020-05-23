@@ -19,7 +19,7 @@ func (c *CreatePatientInDB) CreatePatient(p *patients.CreatePatientCMD) (*patien
 }
 
 func (c *CreatePatientInDB) GetPatients() []*patients.Patient {
-	return c.GetPatients()
+	return c.getPatientsDB()
 }
 
 func (c *CreatePatientInDB) GetPatientByID(id int64) (*patients.Patient, error) {
