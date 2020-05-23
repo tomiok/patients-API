@@ -7,12 +7,12 @@ LDFLAGS=-ldflags "-X main.Version=${VERSION}"
 
 # Build step, generates the binary.
 build:
-	go build ${LDFLAGS} -o ${BINARY} server/main.go
+	go build ${LDFLAGS} -o ${BINARY} cmd/main.go
 
 # Web is a mask to run the web interface, in our case the main function will start the http server.
 web:
 	@clear
-	@go run server/main.go
+	@go run cmd/main.go
 
 # Run go formatter
 fmt:

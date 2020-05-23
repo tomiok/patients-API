@@ -2,20 +2,26 @@ package patients
 
 import (
 	"database/sql"
-	"github.com/tomiok/patients-API/models"
+	"github.com/tomiok/patients-API/patients/models"
 	"log"
 	"time"
 )
+
+type PatientStorage interface {
+	createPatientDB(p *patients.CreatePatientCMD) (*patients.Patient, error)
+	getPatientsDB() []*patients.Patient
+	getPatientByIDBD(id int64) (*patients.Patient, error)
+}
 
 type PatientService struct {
 	db *sql.DB
 }
 
-func NewPatientGateway(db *sql.DB) models.PatientGateway {
+func NewPatientStorageGateway(db *sql.DB) PatientStorage {
 	return &PatientService{db: db}
 }
 
-func (s *PatientService) CreatePatient(p *models.CreatePatientCMD) (*models.Patient, error) {
+func (s *PatientService) createPatientDB(p *patients.CreatePatientCMD) (*patients.Patient, error) {
 	log.Println("creating a new patient")
 	res, err := s.db.Exec("insert into patient (first_name, last_name, address, phone, email) values (?,?,?,?,?)",
 		p.FirstName, p.LastName, p.Address, p.Phone, p.Email)
@@ -27,7 +33,7 @@ func (s *PatientService) CreatePatient(p *models.CreatePatientCMD) (*models.Pati
 
 	id, err := res.LastInsertId()
 
-	return &models.Patient{
+	return &patients.Patient{
 		ID:        id,
 		FirstName: p.FirstName,
 		LastName:  p.LastName,
@@ -38,7 +44,7 @@ func (s *PatientService) CreatePatient(p *models.CreatePatientCMD) (*models.Pati
 	}, nil
 }
 
-func (s *PatientService) GetPatients() []*models.Patient {
+func (s *PatientService) getPatientsDB() []*patients.Patient {
 	rows, err := s.db.Query("select id, first_name, last_name, address, phone, email, created_at from patient")
 
 	if err != nil {
@@ -46,23 +52,23 @@ func (s *PatientService) GetPatients() []*models.Patient {
 		return nil
 	}
 	defer rows.Close()
-	var patients []*models.Patient
+	var p []*patients.Patient
 	for rows.Next() {
-		var patient models.Patient
+		var patient patients.Patient
 		err := rows.Scan(&patient.ID, &patient.FirstName, &patient.LastName, &patient.Address, &patient.Phone,
 			&patient.Email, &patient.CreatedAt)
 		if err != nil {
 			log.Println("cannot read current row")
 			return nil
 		}
-		patients = append(patients, &patient)
+		p = append(p, &patient)
 	}
 
-	return patients
+	return p
 }
 
-func (s *PatientService) GetPatientByID(id int64) (*models.Patient, error) {
-	var patient models.Patient
+func (s *PatientService) getPatientByIDBD(id int64) (*patients.Patient, error) {
+	var patient patients.Patient
 	err := s.db.QueryRow(`select id, first_name, last_name, address, phone, email, created_at from patient
 		where id = ?`, id).Scan(&patient.ID, &patient.FirstName, &patient.LastName, &patient.Address, &patient.Phone,
 		&patient.Email, &patient.CreatedAt)

@@ -10,7 +10,7 @@ import (
 const defaultPort = "8080"
 
 func main() {
-	log.Println("stating API server")
+	log.Println("stating API cmd")
 	port := os.Getenv("PORT")
 
 	if port == "" {

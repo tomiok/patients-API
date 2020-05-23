@@ -1,4 +1,4 @@
-package models
+package patients
 
 import "time"
 
@@ -18,10 +18,4 @@ type CreatePatientCMD struct {
 	Address   string `json:"address"`
 	Phone     string `json:"phone"`
 	Email     string `json:"email"`
-}
-
-type PatientGateway interface {
-	CreatePatient(p *CreatePatientCMD) (*Patient, error)
-	GetPatients() []*Patient
-	GetPatientByID(id int64) (*Patient, error)
 }
