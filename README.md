@@ -1,4 +1,7 @@
 # Backend - Patients
+This is a PoC for a patients API
+
+### API endpoints
 
 
 | Method | URL                             | Description                       |
